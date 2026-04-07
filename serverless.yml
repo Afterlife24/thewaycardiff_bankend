@@ -1,0 +1,41 @@
+service: thewaycardiff-api-lambda
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    NODE_ENV: production
+    EMAIL_USER: ${env:EMAIL_USER, ''}
+    EMAIL_PASS: ${env:EMAIL_PASS, ''}
+    RECIPIENT_EMAIL: ${env:RECIPIENT_EMAIL, ''}
+    FRONTEND_URL: ${env:FRONTEND_URL, ''}
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+
+functions:
+  app:
+    handler: lambda.handler
+    timeout: 30
+    events:
+      - httpApi:
+          path: /{proxy+}
+          method: '*'
+
+package:
+  exclude:
+    - node_modules/aws-sdk/**
+    - .env
+    - .env.example
+    - README.md
